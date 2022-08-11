@@ -3,7 +3,7 @@ import numpy as np
 
 display = True
 
-img = cv2.imread('E:/cmake/edgeDetection/images/01.bmp')
+img = cv2.imread('E:/opensource/image-tools/edge-detection/images/01.jpg')
 
 # if display:
 #     cv2.imshow("img", img)

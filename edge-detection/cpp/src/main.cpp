@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	string path = "E:/cmake/edgeDetection/images/01.bmp";
+	string path = "E:/opensource/image-tools/edge-detection/images/01.jpg";
 	Mat src = cv::imread(path, cv::IMREAD_COLOR);
 
 	if (src.empty())
@@ -51,17 +51,28 @@ int main()
 	for (int i = 0; i < contours.size(); i++)
 	{
 		
-		
+		// 绘制单个轮廓
+		//cv::drawContours(dst, contours, i, Scalar(0, 255, 0), 1, 8, hierarchy);
+		//cv::imshow("dst", dst);
+		//cv::waitKey();
+
 		// 用面积过滤轮廓
 		double area = cv::contourArea(contours[i]);
 
-		if (area > 100.0)
+		if (area > 200.0)
 		{
+				
 			// 获取最小外接矩形
 			cv::RotatedRect rect = cv::minAreaRect(contours[i]);
-			int cx, cy;
-			cx = int(rect.center.x);
-			cy = int(rect.center.y);
+
+			// 绘制最小外界矩形
+			cv::Point2f vertices[4];
+			rect.points(vertices);
+			for (int j = 0; j < 4; j++)
+			{
+				cv::line(dst, vertices[j], vertices[(j + 1) % 4], Scalar(0, 255, 0));
+			}
+
 			float width, height;
 			width = rect.size.width;
 			height = rect.size.height;
@@ -70,18 +81,23 @@ int main()
 			if (std::max(width, height) / std::min(width, height) < 1.5)
 			{
 				// 画示意线
-
-
+				cv::Point start, end;
+				start.x = int((vertices[0].x + vertices[1].x) * 0.5);
+				start.y = int((vertices[0].y + vertices[1].y) * 0.5);
+				end.x = int((vertices[2].x + vertices[3].x) * 0.5);
+				end.y = int((vertices[2].y + vertices[3].y) * 0.5);
+				cv::line(dst, start, end, Scalar(0, 0, 255));
+				// 添加文字
+				Point center;
+				center.x = int(rect.center.x);
+				center.y = int(rect.center.y);
+				cv::putText(dst, std::to_string(width), center, cv::FONT_HERSHEY_SIMPLEX, 0.8, Scalar(0, 255, 0));
 			}
 
-
-
-			// 绘制单个轮廓
-			cv::drawContours(dst, contours, i, Scalar(0, 255, 0), 1, 8, hierarchy);
 			cv::imshow("dst", dst);
 			cv::waitKey();
-		}
 
+		}
 
 	}
 
